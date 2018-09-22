@@ -1,0 +1,10 @@
+extends layout
+
+include mixins/mixins
+
+block content
+  .inner
+    //+dump(store)
+    h2 #{title}
+    // Store mixin
+    +storeForm(store)
