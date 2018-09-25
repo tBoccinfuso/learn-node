@@ -115,11 +115,16 @@ exports.getStoreBySlug = async (req, res, next) => {
 
 // find stores by tag
 exports.getStoresByTag = async (req, res) => {
-  const tags = await Store.getTagsList()
   const tag = req.params.tag;
+  const tagQuery = tag || { $exists: true } // Set equal to requested param (tag) OR set to everything
+  const tagsPromise =  Store.getTagsList() // use our method to get the list of tags
+  const storePromise = Store.find({ tags: tagQuery }) // query our stores by tags   
+  const [tags, stores] = await Promise.all([tagsPromise, storePromise]) // allows us to have multiple queries AND await for the the one that takes the longest to return. Must take in an array of promises
+
   res.render('tag', {
     title: 'Tags',
     tags,
-    tag
+    tag,
+    stores
   })
 }
